@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator typegraphql {
+  provider = "typegraphql-prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int             @id @default(autoincrement())
+  name           String
+  email          String          @unique
+  profileImg     String?
+  spotifyId      String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  trackedArtists TrackedArtist[]
+}
+
+model Artist {
+  id         Int                      @id @default(autoincrement())
+  name       String
+  profileImg String?
+  spotifyId  String
+  createdAt  DateTime                 @default(now())
+  updatedAt  DateTime                 @updatedAt
+  Events     Events[]
+  trackings  TrackedArtist[]
+  jobs       SearchArtistsEventsLog[]
+}
+
+model Events {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  dueDate     DateTime
+  date        String
+  location    String
+  artistId    Int
+  artist      Artist   @relation(fields: [artistId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model TrackedArtist {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  artistId  Int
+  artist    Artist   @relation(fields: [artistId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SearchArtistsEventsLog {
+  id        Int      @id @default(autoincrement())
+  jobId     Int
+  artistId  Int
+  artist    Artist   @relation(fields: [artistId], references: [id])
+  metadata  Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
