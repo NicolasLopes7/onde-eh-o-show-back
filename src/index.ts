@@ -10,5 +10,5 @@ import { context } from './graphql/context';
     context,
   });
 
-  server.listen().then(({ url }) => console.log(`🚀  Server ready at ${url}`));
+  server.listen(process.env.PORT || 4000).then(({ url }) => console.log(`🚀  Server ready at ${url}`));
 })();
